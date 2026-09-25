@@ -42,8 +42,61 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* login.php - inline copy of auth-page styling.
+           Kept in style.css too, since register.php shares this
+           .form-box pattern. Duplicated here so this page still
+           renders correctly on its own. */
+
+        .form-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: var(--space-6);
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .form-box h2 {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: var(--space-5);
+        }
+
+        .form-box label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+            margin-top: var(--space-3);
+        }
+
+        .form-box button[type="submit"] {
+            width: 100%;
+            margin-top: var(--space-4);
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .form-box button[type="submit"]:hover {
+            background: var(--primary-dark);
+        }
+    </style>
 </head>
 <body>
     <div class="form-box">

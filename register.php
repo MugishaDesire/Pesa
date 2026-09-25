@@ -1,20 +1,16 @@
 <?php
 // register.php
-require "config.php"; // gives us $conn (database connection)
+require "config.php";
 
 $error = "";
 $success = "";
 
-// This block only runs when the form is SUBMITTED (method POST)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    // 1. Get the values the user typed, and trim whitespace
     $username = trim($_POST["username"]);
     $email    = trim($_POST["email"]);
     $password = $_POST["password"];
     $confirm  = $_POST["confirm_password"];
 
-    // 2. Basic validation
     if ($username === "" || $email === "" || $password === "") {
         $error = "Please fill in all fields.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -24,21 +20,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } elseif ($password !== $confirm) {
         $error = "Passwords do not match.";
     } else {
-        // 3. Check if the email is already registered
-        // We use a "prepared statement" (with ?) to prevent SQL injection attacks.
         $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email); // "s" means the parameter is a string
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
             $error = "An account with that email already exists.";
         } else {
-            // 4. Hash the password before storing it.
-            // NEVER store plain-text passwords in the database.
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            // 5. Insert the new user
             $insert = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
             $insert->bind_param("sss", $username, $email, $hashedPassword);
 
@@ -57,39 +48,158 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Account · Pesa</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* register.php - inline copy of auth-page styling.
+           Kept in style.css too, since login.php likely shares this
+           .form-box / password-toggle pattern. Duplicated here so this
+           page still renders correctly on its own. */
+
+        .form-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: var(--space-6);
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .form-box h2 {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: var(--space-5);
+        }
+
+        .form-box label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+            margin-top: var(--space-3);
+        }
+
+        .form-box button[type="submit"] {
+            width: 100%;
+            margin-top: var(--space-4);
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .form-box button[type="submit"]:hover {
+            background: var(--primary-dark);
+        }
+
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-faint);
+            margin-top: 4px;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 64px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+    </style>
 </head>
-<body>
+<body class="centered">
     <div class="form-box">
-        <h2>Create Account</h2>
+        <h2>Create your account</h2>
 
         <?php if ($error): ?>
-            <div class="error"><?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-error">
+                <span class="alert-icon">!</span>
+                <span><?php echo htmlspecialchars($error); ?></span>
+            </div>
         <?php endif; ?>
 
         <?php if ($success): ?>
-            <div class="success"><?php echo htmlspecialchars($success); ?></div>
+            <div class="alert alert-success">
+                <span class="alert-icon">✓</span>
+                <span><?php echo htmlspecialchars($success); ?></span>
+            </div>
         <?php endif; ?>
 
-        <!-- method="post" sends form data securely in the request body, not the URL -->
         <form method="post" action="register.php">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+            <div class="field">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="password" name="password" required minlength="6">
+                    <button type="button" class="password-toggle" data-target="password">Show</button>
+                </div>
+                <div class="field-hint">At least 6 characters.</div>
+            </div>
 
-            <label for="confirm_password">Re-Password</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+            <div class="field">
+                <label for="confirm_password">Confirm password</label>
+                <div class="password-wrap">
+                    <input type="password" id="confirm_password" name="confirm_password" required minlength="6">
+                    <button type="button" class="password-toggle" data-target="confirm_password">Show</button>
+                </div>
+            </div>
 
-            <button type="submit">Register</button>
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
         </form>
 
         <p>Already have an account? <a href="login.php">Log in</a></p>
     </div>
+
+    <script>
+        document.querySelectorAll(".password-toggle").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var input = document.getElementById(btn.getAttribute("data-target"));
+                if (!input) return;
+                var showing = input.type === "text";
+                input.type = showing ? "password" : "text";
+                btn.textContent = showing ? "Show" : "Hide";
+            });
+        });
+    </script>
 </body>
 </html>
