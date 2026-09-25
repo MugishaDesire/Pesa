@@ -158,12 +158,6 @@ $barClass = $overBudget ? 'progress-fill--over' : ($percentUsed >= 80 ? 'progres
                 <a class="btn btn-secondary" href="budget.php?month=<?php echo urlencode($selectedMonth); ?>">Set Budgets</a>
                 <a class="btn btn-secondary" href="reports.php?month=<?php echo urlencode($selectedMonth); ?>">View Reports</a>
             </div>
-
-            <hr class="divider">
-
-            <form method="post" action="logout.php">
-                <button type="submit" class="btn btn-danger btn-block">Log Out</button>
-            </form>
         </div>
     </main>
 </body>

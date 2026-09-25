@@ -72,6 +72,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </style>
 </head>
 <body class="site-page">
+    <?php include "nav.php"; ?>
+
     <main class="page-shell page-shell--narrow">
         <div class="card">
             <h2 class="card-title">Add Expense</h2>

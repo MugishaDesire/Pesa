@@ -23,5 +23,5 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Send the user straight to the login page
-header("Location: login.php");
+header("Location: index.php");
 exit;

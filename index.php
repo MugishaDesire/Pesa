@@ -293,6 +293,62 @@ $isLoggedIn = isset($_SESSION["user_id"]);
                 min-width: 0;
             }
         }
+
+        /* From Uiverse.io by Smit-Prajapati — scaled down to fit the topbar */
+        .button {
+            --main-color: rgb(46, 213, 115);
+            --main-bg-color: rgba(46, 213, 116, 0.36);
+            --pattern-color: rgba(46, 213, 116, 0.073);
+
+            filter: hue-rotate(0deg);
+
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.12rem;
+            background: radial-gradient(
+                    circle,
+                    var(--main-bg-color) 0%,
+                    rgba(0, 0, 0, 0) 95%
+                ),
+                linear-gradient(var(--pattern-color) 1px, transparent 1px),
+                linear-gradient(to right, var(--pattern-color) 1px, transparent 1px);
+            background-size:
+                cover,
+                8px 8px,
+                8px 8px;
+            background-position:
+                center center,
+                center center,
+                center center;
+            border-image: radial-gradient(
+                    circle,
+                    var(--main-color) 0%,
+                    rgba(0, 0, 0, 0) 100%
+                )
+                1;
+            border-width: 1px 0 1px 0;
+            color: var(--main-color);
+            padding: 8px 14px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            line-height: 1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: background-size 0.2s ease-in-out;
+        }
+
+        .button:hover {
+            background-size:
+                cover,
+                6px 6px,
+                6px 6px;
+            text-decoration: none;
+        }
+
+        .button:active {
+            filter: hue-rotate(250deg);
+        }
     </style>
 </head>
 <body class="site-page">
@@ -304,7 +360,7 @@ $isLoggedIn = isset($_SESSION["user_id"]);
                 <?php if ($isLoggedIn): ?>
                     <a class="btn-primary-sm" href="dashboard.php">Go to Dashboard</a>
                 <?php else: ?>
-                    <a class="link" href="login.php">Log in</a>
+                    <a class="button" href="login.php">Log in</a>
                     <a class="btn-primary-sm" href="register.php">Get started</a>
                 <?php endif; ?>
             </div>
@@ -322,9 +378,9 @@ $isLoggedIn = isset($_SESSION["user_id"]);
 
             <div class="hero-cta-row">
                 <?php if ($isLoggedIn): ?>
-                    <a class="btn btn-primary" href="dashboard.php">Go to Dashboard</a>
+                    <a class="btn btn-primary" href="dashboard.php">Dashboard</a>
                 <?php else: ?>
-                    <a class="btn btn-primary" href="register.php">Get started free</a>
+                    <a class="btn btn-primary" href="login.php">Dashboard</a>
                     <a class="btn btn-outline" href="#how-it-works">See how it works</a>
                 <?php endif; ?>
             </div>
